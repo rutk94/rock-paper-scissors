@@ -3,6 +3,7 @@
 
 import random
 from tkinter import *
+from tkinter import messagebox
 import tkinter.font as tkFont
 
 version = 'version: beta_v1_2022-04-08'
@@ -55,21 +56,43 @@ startButton.bind('<Leave>', on_leave)
 
     # change player button
 def change_player():
-    chPlayerFrame=LabelFrame(root, text='CHANGE PLAYER')
-    chPlayerFrame.grid(row=3, rowspan=3, column=1)
+    chPlayerButton.configure(state=DISABLED)
+
+    chPlayerFrame=LabelFrame(root)
+    chPlayerFrame.grid(row=3, rowspan=3, column=1, sticky=W)
 
     chPlayerEntry=Entry(chPlayerFrame, width=50, fg='gray')
-    chPlayerEntry.grid(row=0,column=0)
+    chPlayerEntry.grid(row=1,column=1)
     chPlayerEntry.insert(0, 'Type a player name or choose from list below...')
 
-    clearButton=Button(chPlayerFrame, text='Clear')
-    clearButton.grid(row=0, column=1)
+        # clear button - chainging player frame
+    def clear():
+        chPlayerEntry.delete(0, END)
+    
+    clearButton=Button(chPlayerFrame, text='Clear', command=clear)
+    clearButton.grid(row=1, column=2, sticky=W)
 
+        # confirm button - changing player frame
+    def confirm():
+        return
+    
     confirmButton=Button(chPlayerFrame, text='Confirm')
-    confirmButton.grid(row=2, columnspan=2)
+    confirmButton.grid(row=0, column=1, sticky=W)
 
-    backButton=Button(chPlayerFrame, text='Back')
-    backButton.grid(row=3, columnspan=2)
+        # back button - changing player frame
+    def back():
+        if chPlayerEntry.get() != '' and chPlayerEntry.get() != 'Type a player name or choose from list below...':
+            q=messagebox.askyesno('UNCONFIRMED CHANGES','You have UNCONFIRMED data. Do you want to CONFIRM?')
+            if q:
+                confirm()
+            else:
+                chPlayerFrame.destroy()
+        else:
+            chPlayerFrame.destroy()
+        chPlayerButton.configure(state=NORMAL)
+
+    backButton=Button(chPlayerFrame, text='Back', command=back)
+    backButton.grid(row=0, column=0, sticky=W)
 
 
 
@@ -77,7 +100,7 @@ def change_player():
         chPlayerEntry.configure(state=NORMAL, fg='black')
         chPlayerEntry.delete(0, END)
         chPlayerEntry.unbind('<Button-1>', clicked)
-    
+
     clicked = chPlayerEntry.bind('<Button-1>', click)
 
 
