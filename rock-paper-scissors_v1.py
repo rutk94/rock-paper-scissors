@@ -5,6 +5,7 @@ import random
 from tkinter import *
 from tkinter import messagebox
 import tkinter.font as tkFont
+from PIL import ImageTk, Image
 
 version = 'version: beta_v1_2022-04-08'
 
@@ -13,6 +14,7 @@ version = 'version: beta_v1_2022-04-08'
 # main window
 root=Tk()
 root.title("ROCK-PAPER-SCISSORS GAME")
+# root.iconbitmap(r'D:\Dokumenty\KURSY\PYTHON\projekty\rock-paper-scissors\img\backButtonImg — kopia.ico')
 # root.geometry("1000x800")
 
     ## main-LABELS
@@ -34,11 +36,13 @@ titleLabel.grid(row=1, columnspan=2, sticky=W+E)
     # player name
 global player
 player='undefined'
-player_label='Player name: {}'.format(player)
-name_font=tkFont.Font(slant='italic')
-nameLabel=Label(root, text=player_label, font=name_font)
-nameLabel.grid(row=2, column=0, sticky=W)
-
+def show_player_label(player):
+    player_label='Player name: {}'.format(player)
+    name_font=tkFont.Font(slant='italic')
+    global nameLabel
+    nameLabel=Label(root, text=player_label, font=name_font)
+    nameLabel.grid(row=2, column=0, sticky=W)
+show_player_label(player)
 
     ## main-BUTTONS
 def on_enter(e):
@@ -55,34 +59,65 @@ startButton.bind('<Enter>', on_enter)
 startButton.bind('<Leave>', on_leave)
 
     # change player button
+global players
+players = ['Patryk', 'Magda']
+
 def change_player():
     chPlayerButton.configure(state=DISABLED)
 
+        # frame - changing player frame
     chPlayerFrame=LabelFrame(root)
     chPlayerFrame.grid(row=3, rowspan=3, column=1, sticky=W)
 
+        # entry - changing player frame
     chPlayerEntry=Entry(chPlayerFrame, width=50, fg='gray')
     chPlayerEntry.grid(row=1,column=1)
-    chPlayerEntry.insert(0, 'Type a player name or choose from list below...')
+    defaultText = ' Type a player name or choose from list...'
+    chPlayerEntry.insert(0, defaultText)
 
-        # clear button - chainging player frame
+        # option menu - changing player frame
+    def choice_from_list(clicked):
+        chPlayerEntry.delete(0, END)
+        chPlayerEntry.configure(state=NORMAL, fg='black')
+        chPlayerEntry.insert(0, clicked)
+        clicked2.set('')
+    
+    clicked2 = StringVar(value='')
+    drop = OptionMenu(chPlayerFrame, clicked2, *players, command=choice_from_list)
+    drop.grid(row=1, column=2, sticky=W+E)
+    
+        # clear button - changing player frame
     def clear():
         chPlayerEntry.delete(0, END)
     
     clearButton=Button(chPlayerFrame, text='Clear', command=clear)
-    clearButton.grid(row=1, column=2, sticky=W)
+    clearButton.grid(row=1, column=3, sticky=W)
 
         # confirm button - changing player frame
     def confirm():
-        return
+        newPlayerName = chPlayerEntry.get()
+        if not newPlayerName in players and not newPlayerName == '' and not newPlayerName == defaultText:
+            players.append(newPlayerName)
+        if not newPlayerName == '' and not newPlayerName == defaultText:
+            player = newPlayerName
+            nameLabel.destroy()
+            show_player_label(player)
+        else:
+            messagebox.showinfo('CONFIRM ERROR', defaultText)
+            return
+        
+        chPlayerButton.configure(state=NORMAL)
+        chPlayerFrame.destroy()
     
-    confirmButton=Button(chPlayerFrame, text='Confirm')
+    confirmButton=Button(chPlayerFrame, text='Confirm', command=confirm)
     confirmButton.grid(row=0, column=1, sticky=W)
 
         # back button - changing player frame
+    
+
     def back():
-        if chPlayerEntry.get() != '' and chPlayerEntry.get() != 'Type a player name or choose from list below...':
-            q=messagebox.askyesno('UNCONFIRMED CHANGES','You have UNCONFIRMED data. Do you want to CONFIRM?')
+        if chPlayerEntry.get() != '' and chPlayerEntry.get() != defaultText:
+            q = messagebox.askyesno('UNCONFIRMED CHANGES','You have UNCONFIRMED data. Do you want to CONFIRM?')
             if q:
                 confirm()
             else:
@@ -91,15 +126,28 @@ def change_player():
             chPlayerFrame.destroy()
         chPlayerButton.configure(state=NORMAL)
 
-    backButton=Button(chPlayerFrame, text='Back', command=back)
+    # backButton=Button(chPlayerFrame, text='Back', command=back)
+    # backButton = Button(chPlayerFrame, command=back, image=backButtonImg)
+    # backButton.grid(row=0, column=0, sticky=W)
+
+    path = r'D:\Dokumenty\KURSY\PYTHON\projekty\rock-paper-scissors\img\backButtonImg.png'
+    # backButtonImg = ImageTk.PhotoImage(Image.open(path))
+    backButtonImg = PhotoImage(file = path)
+    backButtonImgResized = backButtonImg.subsample(2, 2)
+    #backButtonImgResized = backButtonImg.resize((300,205), Image.ANTIALIAS)
+
+    backButton = Button(chPlayerFrame, image=backButtonImgResized, command=back)
+    backButton.image = backButtonImgResized
     backButton.grid(row=0, column=0, sticky=W)
 
 
-
     def click(event):
-        chPlayerEntry.configure(state=NORMAL, fg='black')
-        chPlayerEntry.delete(0, END)
-        chPlayerEntry.unbind('<Button-1>', clicked)
+        if chPlayerEntry.get() == defaultText:
+            chPlayerEntry.configure(state=NORMAL, fg='black')
+            chPlayerEntry.delete(0, END)
+            chPlayerEntry.unbind('<Button-1>', clicked)
+        else:
+            return
 
     clicked = chPlayerEntry.bind('<Button-1>', click)
 
