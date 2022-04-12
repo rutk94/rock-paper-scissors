@@ -9,7 +9,6 @@ from PIL import ImageTk, Image
 
 version = 'version: beta_v1_2022-04-08'
 
-
 ## WINDOWS / ROOTS
 # main window
 root=Tk()
@@ -19,18 +18,18 @@ root.title("ROCK-PAPER-SCISSORS GAME")
 
     ## main-LABELS
     # time
-timeLabel_font=tkFont.Font(slant='italic')
-timeLabel=Label(root, text='time', font=timeLabel_font)
+timeLabel_font = tkFont.Font(slant='italic')
+timeLabel = Label(root, text='time', font=timeLabel_font)
 timeLabel.grid(row=0, column=0, sticky=W)
 
     # version
-versionLabel_font=tkFont.Font(slant='italic')
-versionLabel=Label(root, text=version, font=versionLabel_font)
+versionLabel_font = tkFont.Font(slant='italic')
+versionLabel = Label(root, text=version, font=versionLabel_font)
 versionLabel.grid(row=0, column=1, sticky=E)
 
     # title
-title_font=tkFont.Font(family='Helvetica', size='32', weight='bold', slant='italic')
-titleLabel=Label(root, text='ROCK-PAPER-SCISSORS\nGAME', padx=200, pady=20, font=title_font)
+title_font = tkFont.Font(family='Helvetica', size='32', weight='bold', slant='italic')
+titleLabel = Label(root, text='ROCK-PAPER-SCISSORS\nGAME', padx=200, pady=20, font=title_font)
 titleLabel.grid(row=1, columnspan=2, sticky=W+E)
 
     # player name
@@ -38,9 +37,9 @@ global player
 player='undefined'
 def show_player_label(player):
     player_label='Player name: {}'.format(player)
-    name_font=tkFont.Font(slant='italic')
+    name_font = tkFont.Font(slant='italic')
     global nameLabel
-    nameLabel=Label(root, text=player_label, font=name_font)
+    nameLabel = Label(root, text=player_label, font=name_font)
     nameLabel.grid(row=2, column=0, sticky=W)
 show_player_label(player)
 
@@ -52,8 +51,8 @@ def on_leave(e):
     e.widget['foreground'] = 'black'
 
     # start button
-start_font=tkFont.Font(size='30', weight='bold')
-startButton=Button(root, text='START', font=start_font, activeforeground='orange', relief=RIDGE, bd=0)
+start_font = tkFont.Font(size='30', weight='bold')
+startButton = Button(root, text='START', font=start_font, activeforeground='orange', relief=RIDGE, bd=0)
 startButton.grid(row=3, column=0, sticky=W)
 startButton.bind('<Enter>', on_enter)
 startButton.bind('<Leave>', on_leave)
@@ -70,7 +69,7 @@ def change_player():
     chPlayerFrame.grid(row=3, rowspan=3, column=1, sticky=W)
 
         # entry - changing player frame
-    chPlayerEntry=Entry(chPlayerFrame, width=50, fg='gray')
+    chPlayerEntry = Entry(chPlayerFrame, width=50, fg='gray')
     chPlayerEntry.grid(row=1,column=1)
     defaultText = ' Type a player name or choose from list...'
     chPlayerEntry.insert(0, defaultText)
@@ -84,14 +83,19 @@ def change_player():
     
     clicked2 = StringVar(value='')
     drop = OptionMenu(chPlayerFrame, clicked2, *players, command=choice_from_list)
-    drop.grid(row=1, column=2, sticky=W+E)
+    drop.grid(row=1, column=3, sticky=W+E)
     
         # clear button - changing player frame
     def clear():
         chPlayerEntry.delete(0, END)
     
-    clearButton=Button(chPlayerFrame, text='Clear', command=clear)
-    clearButton.grid(row=1, column=3, sticky=W)
+    clearButtonImgPath = r'D:\Dokumenty\KURSY\PYTHON\projekty\rock-paper-scissors\img\clearButtonImg.png'
+    clearButtonImg = PhotoImage(file = clearButtonImgPath)
+    clearButtonImgResized = clearButtonImg.subsample(1,1)
+
+    clearButton = Button(chPlayerFrame, image=clearButtonImgResized, command=clear)
+    clearButton.image = clearButtonImgResized
+    clearButton.grid(row=1, column=2, sticky=W)
 
         # confirm button - changing player frame
     def confirm():
@@ -108,13 +112,16 @@ def change_player():
         
         chPlayerButton.configure(state=NORMAL)
         chPlayerFrame.destroy()
+
+    confirmButtonImgPath = r'D:\Dokumenty\KURSY\PYTHON\projekty\rock-paper-scissors\img\confirmButtonImg.png'
+    confirmButtonImg = PhotoImage(file = confirmButtonImgPath)
+    confirmButtonImgResized = confirmButtonImg.subsample(2, 2)
     
-    confirmButton=Button(chPlayerFrame, text='Confirm', command=confirm)
+    confirmButton = Button(chPlayerFrame, image=confirmButtonImgResized, command=confirm)
+    confirmButton.image = confirmButtonImgResized
     confirmButton.grid(row=0, column=1, sticky=W)
 
         # back button - changing player frame
-    
-
     def back():
         if chPlayerEntry.get() != '' and chPlayerEntry.get() != defaultText:
             q = messagebox.askyesno('UNCONFIRMED CHANGES','You have UNCONFIRMED data. Do you want to CONFIRM?')
@@ -126,20 +133,13 @@ def change_player():
             chPlayerFrame.destroy()
         chPlayerButton.configure(state=NORMAL)
 
-    # backButton=Button(chPlayerFrame, text='Back', command=back)
-    # backButton = Button(chPlayerFrame, command=back, image=backButtonImg)
-    # backButton.grid(row=0, column=0, sticky=W)
-
-    path = r'D:\Dokumenty\KURSY\PYTHON\projekty\rock-paper-scissors\img\backButtonImg.png'
-    # backButtonImg = ImageTk.PhotoImage(Image.open(path))
-    backButtonImg = PhotoImage(file = path)
+    backButtonImgPath = r'D:\Dokumenty\KURSY\PYTHON\projekty\rock-paper-scissors\img\backButtonImg.png'
+    backButtonImg = PhotoImage(file = backButtonImgPath)
     backButtonImgResized = backButtonImg.subsample(2, 2)
-    #backButtonImgResized = backButtonImg.resize((300,205), Image.ANTIALIAS)
 
     backButton = Button(chPlayerFrame, image=backButtonImgResized, command=back)
     backButton.image = backButtonImgResized
     backButton.grid(row=0, column=0, sticky=W)
-
 
     def click(event):
         if chPlayerEntry.get() == defaultText:
@@ -151,11 +151,8 @@ def change_player():
 
     clicked = chPlayerEntry.bind('<Button-1>', click)
 
-
-    
-
-chPlayer_font=tkFont.Font(size='15', weight='bold')
-chPlayerButton=Button(root, text='CHANGE PLAYER', font=chPlayer_font, activeforeground='orange', relief=RIDGE,
+chPlayer_font = tkFont.Font(size='15', weight='bold')
+chPlayerButton = Button(root, text='CHANGE PLAYER', font=chPlayer_font, activeforeground='orange', relief=RIDGE,
                         bd=0, command=change_player)
 chPlayerButton.grid(row=4, column=0, ipadx=10, sticky=W)
 chPlayerButton.bind('<Enter>', on_enter)
@@ -166,8 +163,8 @@ chPlayerButton.bind('<Leave>', on_leave)
 def exit():
     root.destroy()
 
-exit_font=tkFont.Font(size='15', weight='bold')
-exitButton=Button(root, text='EXIT', font=exit_font, activeforeground='orange', relief=RIDGE, bd=0, 
+exit_font = tkFont.Font(size='15', weight='bold')
+exitButton = Button(root, text='EXIT', font=exit_font, activeforeground='orange', relief=RIDGE, bd=0, 
                     command=exit)
 exitButton.grid(row=5, column=0, ipadx=10, sticky=W)
 exitButton.bind('<Enter>', on_enter)
