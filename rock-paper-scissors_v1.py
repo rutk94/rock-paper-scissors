@@ -6,8 +6,12 @@ from tkinter import *
 from tkinter import messagebox
 import tkinter.font as tkFont
 from PIL import ImageTk, Image
+import os
 
 version = 'version: beta_v1_2022-04-08'
+
+global srcPath
+srcPath = os.getcwd()
 
 ## WINDOWS / ROOTS
 # main window
@@ -15,6 +19,8 @@ root=Tk()
 root.title("ROCK-PAPER-SCISSORS GAME")
 # root.iconbitmap(r'D:\Dokumenty\KURSY\PYTHON\projekty\rock-paper-scissors\img\backButtonImg — kopia.ico')
 # root.geometry("1000x800")
+
+
 
     ## main-LABELS
     # time
@@ -51,8 +57,88 @@ def on_leave(e):
     e.widget['foreground'] = 'black'
 
     # start button
+def start():
+    # start root
+    startRoot = Toplevel()
+    startRoot.title('ROCK-PAPER-SCISSORS GAME')
+
+    def show_comp_choice():
+        choices = ['rock', 'paper', 'scissors']
+        compChoice = random.choice(choices)
+        source = '''
+global choosenCompImg
+choosenCompImg = PhotoImage(file = srcPath+r'\img\{}_trans.png')
+'''.format(compChoice)
+        exec(source)
+        compChoiceLabel.configure(image = choosenCompImg)
+        compChoiceLabel.image = choosenCompImg
+        compChoiceLabel.grid(row=0, column=1)
+
+    def show_choice(imagePath):
+        choosenImg = PhotoImage(file = imagePath)
+        playerChoiceLabel.configure(image = choosenImg)
+        playerChoiceLabel.image = choosenImg
+        playerChoiceLabel.grid(row=1, column=1)
+        show_comp_choice()
+
+    ## start root - LABELS
+    # computer choice
+    compChoiceLabel = Label(startRoot)
+
+    # player choice
+    playerChoiceLabel = Label(startRoot)
+
+    # communicator
+    # counter-all
+    # counter-wins
+    # counter-percentage
+    # counter-choices
+    # counter-which choice wins most time
+
+    ## start root - BUTTONS
+    # rock button
+
+    rockButtonImg = PhotoImage(file = srcPath+r'\img\rock_trans.png')
+    rockButtonImg = rockButtonImg.subsample(1,1)
+    rockButton = Button(startRoot, image=rockButtonImg, bd = 0,
+                        command = lambda: show_choice(srcPath+r'\img\rock_trans.png'))
+    rockButton.image = rockButtonImg
+    rockButton.grid(row=3, column=0)
+
+    # paper button
+    paperButtonImg = PhotoImage(file = srcPath+r'\img\paper_trans.png')
+    paperButtonImg = paperButtonImg.subsample(1,1)
+    paperButton = Button(startRoot, image=paperButtonImg, bd = 0,
+                        command = lambda: show_choice(srcPath+r'\img\paper_trans.png'))
+    paperButton.image = paperButtonImg
+    paperButton.grid(row=3, column=1)
+
+    # scissors button
+    def scissors():
+        pass
+
+    scissorsButtonImg = PhotoImage(file = srcPath+r'\img\scissors_trans.png')
+    scissorsButtonImg = scissorsButtonImg.subsample(1,1)
+    scissorsButton = Button(startRoot, image=scissorsButtonImg, bd = 0,
+                            command = lambda: show_choice(srcPath+r'\img\scissors_trans.png'))
+    scissorsButton.image = scissorsButtonImg
+    scissorsButton.grid(row=3, column=2)
+
+    # show more statistics
+    # reset button
+    # quit game button
+    def exit_startRoot():
+        startRoot.destroy()
+
+    exit_font = tkFont.Font(size='15', weight='bold')
+    exitButton = Button(startRoot, text='EXIT', font=exit_font, activeforeground='orange', relief=RIDGE, bd=0, 
+                        command=exit_startRoot)
+    exitButton.grid(row=4, column=0, ipadx=10, sticky=W)
+    exitButton.bind('<Enter>', on_enter)
+    exitButton.bind('<Leave>', on_leave)
+
 start_font = tkFont.Font(size='30', weight='bold')
-startButton = Button(root, text='START', font=start_font, activeforeground='orange', relief=RIDGE, bd=0)
+startButton = Button(root, text='START', font=start_font, activeforeground='orange', relief=RIDGE, bd=0, command=start)
 startButton.grid(row=3, column=0, sticky=W)
 startButton.bind('<Enter>', on_enter)
 startButton.bind('<Leave>', on_leave)
@@ -89,7 +175,7 @@ def change_player():
     def clear():
         chPlayerEntry.delete(0, END)
     
-    clearButtonImgPath = r'D:\Dokumenty\KURSY\PYTHON\projekty\rock-paper-scissors\img\clearButtonImg.png'
+    clearButtonImgPath = srcPath+r'\img\clearButtonImg.png'
     clearButtonImg = PhotoImage(file = clearButtonImgPath)
     clearButtonImgResized = clearButtonImg.subsample(1,1)
 
@@ -113,7 +199,7 @@ def change_player():
         chPlayerButton.configure(state=NORMAL)
         chPlayerFrame.destroy()
 
-    confirmButtonImgPath = r'D:\Dokumenty\KURSY\PYTHON\projekty\rock-paper-scissors\img\confirmButtonImg.png'
+    confirmButtonImgPath = srcPath+r'\img\confirmButtonImg.png'
     confirmButtonImg = PhotoImage(file = confirmButtonImgPath)
     confirmButtonImgResized = confirmButtonImg.subsample(2, 2)
     
@@ -133,7 +219,7 @@ def change_player():
             chPlayerFrame.destroy()
         chPlayerButton.configure(state=NORMAL)
 
-    backButtonImgPath = r'D:\Dokumenty\KURSY\PYTHON\projekty\rock-paper-scissors\img\backButtonImg.png'
+    backButtonImgPath = srcPath+r'\img\backButtonImg.png'
     backButtonImg = PhotoImage(file = backButtonImgPath)
     backButtonImgResized = backButtonImg.subsample(2, 2)
 
@@ -171,33 +257,6 @@ exitButton.bind('<Enter>', on_enter)
 exitButton.bind('<Leave>', on_leave)
 
 
-
-# start root
-    ## start root - LABELS
-    # computer choice
-    # player choice
-    # communicator
-    # counter-all
-    # counter-wins
-    # counter-percentage
-    # counter-choices
-    # counter-which choice wins most time
-
-    ## start root - BUTTONS
-    # rock button
-    # paper button
-    # scissors button
-    # show more statistics
-    # reset button
-    # quit game button
-# type name root
-    ## type name - LABELS
-    # name entry
-    # names list
-
-    ## type name - BUTTONS
-    # start button
-    # back button
 
 
 
