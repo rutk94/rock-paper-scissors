@@ -7,6 +7,7 @@ from tkinter import messagebox
 import tkinter.font as tkFont
 from PIL import ImageTk, Image
 import os
+import time
 
 version = 'version: beta_v1_2022-04-08'
 
@@ -61,8 +62,73 @@ def start():
     # start root
     startRoot = Toplevel()
     startRoot.title('ROCK-PAPER-SCISSORS GAME')
+    # startRoot.geometry('650x800')
 
-    def show_comp_choice():
+    startFrame = LabelFrame(startRoot, bd=0)
+    startFrame.grid(row=1, columnspan=3)
+
+    statisticsFrame = LabelFrame(startRoot, text = 'Statistics')
+    statisticsFrame.grid(row =0, rowspan=6, column=3, sticky=N+S, padx=(10,0))
+
+    # def time_sleep(imagePath):
+    #     compChoiceLabel.configure(image=undefinedImg)
+    #     playerChoiceLabel.configure(image=undefinedImg)
+    #     root.after(1000, comLabel.config(text='3'))
+    #     root.after(1000, comLabel.config(text='2'))
+    #     root.after(1000, comLabel.config(text='1'))
+    #     show_choice(imagePath)
+
+    global n_games
+    n_games = StringVar(value='0')
+
+    def counter():
+        n_games_new = n_games.get()
+        n_games_new = int(n_games_new) + 1
+        n_games_new = str(n_games_new)
+        n_games.set(value=n_games_new)
+        return n_games
+
+    def winner(compChoice, playerChoice):
+        playerChoice = playerChoice.replace('_trans.png','')
+
+        if compChoice == playerChoice:
+            communicator(4)
+        
+        if compChoice == 'rock' and playerChoice == 'scissors':
+            communicator(2)
+        
+        if compChoice == 'paper' and playerChoice == 'rock':
+            communicator(2)
+
+        if compChoice == 'scissors' and playerChoice == 'paper':
+            communicator(2)
+
+        if playerChoice == 'rock' and compChoice  == 'scissors':
+            communicator(3)
+        
+        if playerChoice == 'paper' and compChoice  == 'rock':
+            communicator(3)
+
+        if playerChoice == 'scissors' and compChoice  == 'paper':
+            communicator(3)
+
+    def communicator(action):
+        # actions:
+        # 1. choose a button - default
+        # 2. computer wins
+        # 3. player wins
+        # 4. draw
+        if action == 1:
+            comLabel.config(text='Choose ROCK / PAPER / SCISSORS from below!')
+        elif action == 2:
+            comLabel.config(text='COMPUTER WINS!')
+        elif action == 3:
+            comLabel.config(text='{} WINS!'.format(player).upper())
+        elif action == 4:
+            comLabel.config(text='DRAW! One more time.')
+        counter()
+
+    def show_comp_choice(playerChoice):
         choices = ['rock', 'paper', 'scissors']
         compChoice = random.choice(choices)
         source = '''
@@ -72,24 +138,50 @@ choosenCompImg = PhotoImage(file = srcPath+r'\img\{}_trans.png')
         exec(source)
         compChoiceLabel.configure(image = choosenCompImg)
         compChoiceLabel.image = choosenCompImg
-        compChoiceLabel.grid(row=0, column=1)
+        winner(compChoice, playerChoice)
 
     def show_choice(imagePath):
         choosenImg = PhotoImage(file = imagePath)
         playerChoiceLabel.configure(image = choosenImg)
         playerChoiceLabel.image = choosenImg
-        playerChoiceLabel.grid(row=1, column=1)
-        show_comp_choice()
+        playerChoice = os.path.basename(imagePath)
+        show_comp_choice(playerChoice)
 
     ## start root - LABELS
+    # player label
+    player_label='Player name: {}'.format(player)
+    name_font = tkFont.Font(slant='italic')
+    playerLabel = Label(startRoot, text=player_label, font=name_font)
+    playerLabel.grid(row=0, column=0, sticky=W)
+
     # computer choice
-    compChoiceLabel = Label(startRoot)
+    undefinedImg = PhotoImage(file = srcPath + r'\img\undefined.png')
+
+    compChoiceLabelText = Label(startFrame, text = 'Computer')
+    compChoiceLabelText.grid(row=0, column=0)
+
+    compChoiceLabel = Label(startFrame, image = undefinedImg)
+    compChoiceLabel.image = undefinedImg
+    compChoiceLabel.grid(row=1, column=0)
 
     # player choice
-    playerChoiceLabel = Label(startRoot)
+    playerChoiceLabelText = Label(startFrame, text = player)
+    playerChoiceLabelText.grid(row=0, column=1)
+
+    playerChoiceLabel = Label(startFrame, image = undefinedImg)
+    playerChoiceLabel.image = undefinedImg
+    playerChoiceLabel.grid(row=1, column=1)
 
     # communicator
+    comLabel = Label(startRoot, text='Choose ROCK / PAPER / SCISSORS from below!')
+    comLabel.grid(row=3, columnspan=3)
+
     # counter-all
+    counterAllText = Label(statisticsFrame, text='Number of games: ')
+    counterAllText.grid(row=0, column=0, sticky=E)
+    couterAll = Label(statisticsFrame, textvariable=n_games)
+    couterAll.grid(row=0, column=1, sticky=W)
+
     # counter-wins
     # counter-percentage
     # counter-choices
@@ -97,13 +189,13 @@ choosenCompImg = PhotoImage(file = srcPath+r'\img\{}_trans.png')
 
     ## start root - BUTTONS
     # rock button
-
     rockButtonImg = PhotoImage(file = srcPath+r'\img\rock_trans.png')
     rockButtonImg = rockButtonImg.subsample(1,1)
     rockButton = Button(startRoot, image=rockButtonImg, bd = 0,
                         command = lambda: show_choice(srcPath+r'\img\rock_trans.png'))
+    # rockButton = Button(startRoot, image=rockButtonImg, bd=0, command= lambda: time_sleep(srcPath+r'\img\rock_trans.png'))
     rockButton.image = rockButtonImg
-    rockButton.grid(row=3, column=0)
+    rockButton.grid(row=4, column=0)
 
     # paper button
     paperButtonImg = PhotoImage(file = srcPath+r'\img\paper_trans.png')
@@ -111,21 +203,19 @@ choosenCompImg = PhotoImage(file = srcPath+r'\img\{}_trans.png')
     paperButton = Button(startRoot, image=paperButtonImg, bd = 0,
                         command = lambda: show_choice(srcPath+r'\img\paper_trans.png'))
     paperButton.image = paperButtonImg
-    paperButton.grid(row=3, column=1)
+    paperButton.grid(row=4, column=1)
 
     # scissors button
-    def scissors():
-        pass
-
     scissorsButtonImg = PhotoImage(file = srcPath+r'\img\scissors_trans.png')
     scissorsButtonImg = scissorsButtonImg.subsample(1,1)
     scissorsButton = Button(startRoot, image=scissorsButtonImg, bd = 0,
                             command = lambda: show_choice(srcPath+r'\img\scissors_trans.png'))
     scissorsButton.image = scissorsButtonImg
-    scissorsButton.grid(row=3, column=2)
+    scissorsButton.grid(row=4, column=2)
 
     # show more statistics
     # reset button
+
     # quit game button
     def exit_startRoot():
         startRoot.destroy()
@@ -133,7 +223,7 @@ choosenCompImg = PhotoImage(file = srcPath+r'\img\{}_trans.png')
     exit_font = tkFont.Font(size='15', weight='bold')
     exitButton = Button(startRoot, text='EXIT', font=exit_font, activeforeground='orange', relief=RIDGE, bd=0, 
                         command=exit_startRoot)
-    exitButton.grid(row=4, column=0, ipadx=10, sticky=W)
+    exitButton.grid(row=5, column=0, ipadx=10, sticky=W)
     exitButton.bind('<Enter>', on_enter)
     exitButton.bind('<Leave>', on_leave)
 
@@ -189,6 +279,7 @@ def change_player():
         if not newPlayerName in players and not newPlayerName == '' and not newPlayerName == defaultText:
             players.append(newPlayerName)
         if not newPlayerName == '' and not newPlayerName == defaultText:
+            global player
             player = newPlayerName
             nameLabel.destroy()
             show_player_label(player)
