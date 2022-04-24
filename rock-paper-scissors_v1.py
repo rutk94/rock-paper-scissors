@@ -80,13 +80,79 @@ def start():
 
     global n_games
     n_games = StringVar(value='0')
+    global n_comp_win
+    n_comp_win = StringVar(value='0')
+    global n_player_win
+    n_player_win = StringVar(value='0')
+    global n_draw
+    n_draw = StringVar(value='0')
 
-    def counter():
-        n_games_new = n_games.get()
-        n_games_new = int(n_games_new) + 1
-        n_games_new = str(n_games_new)
-        n_games.set(value=n_games_new)
-        return n_games
+    global n_comp_perc
+    n_comp_perc = StringVar(value='0%')
+    global n_player_perc
+    n_player_perc = StringVar(value='0%')
+    global n_draw_perc
+    n_draw_perc = StringVar(value='0%')
+
+    def counter(action):
+        def counter_all():
+            n_games_new = n_games.get()
+            n_games_new = int(n_games_new) + 1
+            n_games_new = str(n_games_new)
+            n_games.set(value=n_games_new)
+            return n_games
+        
+        def counter_winner(action):
+            if action == 2: #computer wins
+                n_comp_win_new = n_comp_win.get()
+                n_comp_win_new = int(n_comp_win_new) + 1
+                n_comp_win_new = str(n_comp_win_new)
+                n_comp_win.set(value=n_comp_win_new)
+                return n_comp_win
+            elif action == 3: #player wins
+                n_player_win_new = n_player_win.get()
+                n_player_win_new = int(n_player_win_new) + 1
+                n_player_win_new = str(n_player_win_new)
+                n_player_win.set(value=n_player_win_new)
+                return n_player_win
+            elif action == 4: #draw
+                n_draw_new = n_draw.get()
+                n_draw_new = int(n_draw_new) + 1
+                n_draw_new = str(n_draw_new)
+                n_draw.set(value=n_draw_new)
+                return n_draw
+            else:
+                pass
+        
+        def counter_perc():
+                n_comp_perc_new = n_comp_perc.get()
+                n_comp_perc_new = n_comp_perc_new.replace('%','')
+                n_comp_win_get = n_comp_win.get()
+                n_games_get = n_games.get()
+                n_comp_perc_new = round(float(n_comp_win_get) / float(n_games_get) * 100, 2)
+                n_comp_perc_new = str(n_comp_perc_new)
+                n_comp_perc.set(value=n_comp_perc_new+'%')
+
+                n_player_perc_new = n_player_perc.get()
+                n_player_perc_new = n_player_perc_new.replace('%','')
+                n_player_win_get = n_player_win.get()
+                n_games_get = n_games.get()
+                n_player_perc_new = round(float(n_player_win_get) / float(n_games_get) * 100, 2)
+                n_player_perc_new = str(n_player_perc_new)
+                n_player_perc.set(value=n_player_perc_new+'%')
+
+                n_draw_perc_new = n_draw_perc.get()
+                n_draw_perc_new = n_draw_perc_new.replace('%','')
+                n_draw_get = n_draw.get()
+                n_games_get = n_games.get()
+                n_draw_perc_new = round(float(n_draw_get) / float(n_games_get) * 100, 2)
+                n_draw_perc_new = str(n_draw_perc_new)
+                n_draw_perc.set(value=n_draw_perc_new+'%')
+
+        counter_all()
+        counter_winner(action)
+        counter_perc()
+
 
     def winner(compChoice, playerChoice):
         playerChoice = playerChoice.replace('_trans.png','')
@@ -126,7 +192,7 @@ def start():
             comLabel.config(text='{} WINS!'.format(player).upper())
         elif action == 4:
             comLabel.config(text='DRAW! One more time.')
-        counter()
+        counter(action)
 
     def show_comp_choice(playerChoice):
         choices = ['rock', 'paper', 'scissors']
@@ -178,12 +244,42 @@ choosenCompImg = PhotoImage(file = srcPath+r'\img\{}_trans.png')
 
     # counter-all
     counterAllText = Label(statisticsFrame, text='Number of games: ')
-    counterAllText.grid(row=0, column=0, sticky=E)
-    couterAll = Label(statisticsFrame, textvariable=n_games)
+    counterAllText.grid(row=0, column=0, sticky=W)
+    couterAll = Label(statisticsFrame, textvariable=n_games, width=5)
     couterAll.grid(row=0, column=1, sticky=W)
 
     # counter-wins
+    counterCompWinText = Label(statisticsFrame, text='Number of computer wins: ')
+    counterCompWinText.grid(row=1, column=0, sticky=W)
+    counterCompWin = Label(statisticsFrame, textvariable=n_comp_win, width=5)
+    counterCompWin.grid(row=1, column=1, sticky=W)
+
+    counterPlayerWinText = Label(statisticsFrame, text='Number of {} wins: '.format(player))
+    counterPlayerWinText.grid(row=2, column=0, sticky=W)
+    counterPlayerWin = Label(statisticsFrame, textvariable=n_player_win, width=5)
+    counterPlayerWin.grid(row=2, column=1, sticky=W)
+
+    counterDrawText = Label(statisticsFrame, text='Number of draws: ')
+    counterDrawText.grid(row=3, column=0, sticky=W)
+    counterDraw = Label(statisticsFrame, textvariable=n_draw, width=5)
+    counterDraw.grid(row=3, column=1, sticky=W)
+
     # counter-percentage
+    counterCompPercText = Label(statisticsFrame, text='Percentage of computer wins: ')
+    counterCompPercText.grid(row=4, column=0, sticky=W)
+    counterCompPerc = Label(statisticsFrame, textvariable=n_comp_perc, width=5)
+    counterCompPerc.grid(row=4, column=1, sticky=W)
+
+    counterPlayerPercText = Label(statisticsFrame, text='Percentage of {} wins: '.format(player))
+    counterPlayerPercText.grid(row=5, column=0, sticky=W)
+    counterPlayerPerc = Label(statisticsFrame, textvariable=n_player_perc, width=5)
+    counterPlayerPerc.grid(row=5, column=1, sticky=W)
+
+    counterDrawPercText = Label(statisticsFrame, text='Percentage of draws: ')
+    counterDrawPercText.grid(row=6, column=0, sticky=W)
+    counterDrawPerc = Label(statisticsFrame, textvariable=n_draw_perc, width=5)
+    counterDrawPerc.grid(row=6, column=1, sticky=W)
+
     # counter-choices
     # counter-which choice wins most time
 
@@ -235,10 +331,11 @@ startButton.bind('<Leave>', on_leave)
 
     # change player button
 global players
-players = ['Patryk', 'Magda']
+players = ['undefined', 'Patryk', 'Magda']
 
 def change_player():
     chPlayerButton.configure(state=DISABLED)
+    startButton.configure(state=DISABLED)
 
         # frame - changing player frame
     chPlayerFrame=LabelFrame(root)
@@ -288,6 +385,7 @@ def change_player():
             return
         
         chPlayerButton.configure(state=NORMAL)
+        startButton.configure(state=NORMAL)
         chPlayerFrame.destroy()
 
     confirmButtonImgPath = srcPath+r'\img\confirmButtonImg.png'
@@ -309,6 +407,7 @@ def change_player():
         else:
             chPlayerFrame.destroy()
         chPlayerButton.configure(state=NORMAL)
+        startButton.configure(state=NORMAL)
 
     backButtonImgPath = srcPath+r'\img\backButtonImg.png'
     backButtonImg = PhotoImage(file = backButtonImgPath)
